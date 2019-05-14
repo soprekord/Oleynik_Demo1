@@ -1,0 +1,88 @@
+{
+  "builders": [
+       {
+      "type": "virtualbox-iso",
+      "iso_url": "{{user `iso_url`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "headless": true,
+      "boot_wait": "5m",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_wait_timeout": "6h",
+      "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
+      "guest_os_type": "Windows2016_64",
+      "disk_size": 61440,
+      "floppy_files": [
+        "{{user `autounattend`}}",
+        "./scripts/openssh.ps1"        
+      ],
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "3072"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "2"
+        ],
+        ["storageattach", "{{.Name}}", "--storagectl", "IDE Controller", 
+          "--port", "1", "--device", "1", "--type", "dvddrive", "--medium", 
+          "./SQLServer2017-Dev.iso"]
+      ]           
+    }    
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "remote_path": "/tmp/script.bat",
+      "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
+      "scripts": [
+        "./scripts/vm-guest-tools.bat",
+        "./scripts/vagrant-ssh.bat",
+        "./scripts/enable-rdp.bat",
+        "./scripts/disable-auto-logon.bat"
+      ]
+    },
+    {
+      "type": "powershell",
+      "scripts": [
+        "./scripts/IIS+NeT.ps1",
+        "./scripts/chocolatey.ps1"
+      ]
+    },
+    {
+      "type": "powershell",
+      "script": "./scripts/SQL.ps1"
+    },
+    {
+      "type": "windows-restart"     
+    },
+    {
+      "type": "powershell",
+      "pause_before": "120s",
+      "scripts": [
+        "./scripts/gitchoco.ps1",
+        "./scripts/POChoco.ps1"
+      ]
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "keep_input_artifact": false,
+      "output": "windows_2016_{{.Provider}}.box",
+      "vagrantfile_template": "vagrantfile_2016.template"
+    }
+  ],
+  "variables": {
+    "iso_url": "file://D:/DEV/win2016/ISO/Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.iso",
+    "iso_checksum_type": "sha1",
+    "iso_checksum": "772700802951b36c8cb26a61c040b9a8dc3816a3",
+    "autounattend": "./Autounattend.xml"
+  }
+}
