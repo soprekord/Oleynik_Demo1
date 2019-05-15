@@ -1,0 +1,5 @@
+Download Windows Server 2016
+https://software-download.microsoft.com/download/sg/Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO
+
+ Download SQL2017
+https://download.microsoft.com/download/5/A/7/5A7065A2-C81C-4A31-9972-8A31AC9388C1/SQLServer2017-SSEI-Dev.exe

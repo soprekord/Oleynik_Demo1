@@ -44,43 +44,48 @@
       "scripts": [
         "./scripts/vm-guest-tools.bat",
         "./scripts/vagrant-ssh.bat",
-        "./scripts/enable-rdp.bat",
-        "./scripts/disable-auto-logon.bat"
+        "./scripts/enable-rdp.bat"                     
       ]
-    },
+    },      
     {
       "type": "powershell",
-      "scripts": [
-        "./scripts/IIS+NeT.ps1",
-        "./scripts/chocolatey.ps1"
-      ]
-    },
-    {
-      "type": "powershell",
-      "script": "./scripts/SQL.ps1"
-    },
-    {
-      "type": "windows-restart"     
-    },
+      "scripts": [                
+        "./scripts/chocolatey.ps1"]
+    },    
+      {
+        "type": "powershell",
+        "pause_before": "120s",
+        "script": "scripts/gitchoco.ps1"
+      },         
     {
       "type": "powershell",
       "pause_before": "120s",
       "scripts": [
-        "./scripts/gitchoco.ps1",
-        "./scripts/POChoco.ps1"
-      ]
-    }
+        "./scripts/IIS+NeT.ps1",
+        "./scripts/SQL.ps1"       
+      ]    
+    },
+    {
+      "type": "powershell",
+      "pause_before": "120s",
+      "script": "scripts/clone_git.ps1"
+    },
+    {
+      "type": "powershell",
+      "pause_before": "120s",
+      "script": "scripts/add_server.ps1"
+    }          
   ],
   "post-processors": [
     {
       "type": "vagrant",
       "keep_input_artifact": false,
       "output": "windows_2016_{{.Provider}}.box",
-      "vagrantfile_template": "vagrantfile_2016.template"
+      "vagrantfile_template": "vagrantfile-2016.template"
     }
   ],
   "variables": {
-    "iso_url": "file://D:/DEV/win2016/ISO/Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.iso",
+    "iso_url": "file://D:/DevOps/ISO/Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.iso",
     "iso_checksum_type": "sha1",
     "iso_checksum": "772700802951b36c8cb26a61c040b9a8dc3816a3",
     "autounattend": "./Autounattend.xml"
